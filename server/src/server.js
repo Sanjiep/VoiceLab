@@ -5,6 +5,7 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 const config = require('./config');
 const authMiddleware = require('./middleware/auth');
+const voicesRoutes = require('./routes/voices');
 
 const authRoutes = require('./routes/auth');  // ← add this
 
@@ -18,6 +19,7 @@ app.use(express.json({ limit: `${config.maxAudioSize}mb` }));
 
 // Routes
 app.use('/api/v1/auth', authRoutes);  // ← add this
+app.use('/api/v1/voices', voicesRoutes); 
 
 // Health endpoint
 app.get('/api/v1/health', (req, res) => {
