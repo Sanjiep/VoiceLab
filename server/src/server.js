@@ -9,6 +9,7 @@ const voicesRoutes = require('./routes/voices');
 const ttsRoutes = require('./routes/tts');
 const authRoutes = require('./routes/auth'); 
 const userRoutes = require('./routes/user');
+const cloneRoutes = require('./routes/clone');
 const path = require('path');
 
 const app = express();
@@ -24,6 +25,7 @@ app.use('/api/v1/auth', authRoutes);  // ← add this
 app.use('/api/v1/voices', voicesRoutes); 
 app.use('/api/v1/tts', ttsRoutes);
 app.use('/api/v1/user', userRoutes);
+app.use('/api/v1/clone', cloneRoutes);
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 // Health endpoint
