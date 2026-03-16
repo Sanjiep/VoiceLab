@@ -1,0 +1,27 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Environment variables
+.env
+**/.env
+
+# Logs
+*.log
+npm-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Audio files
+**/uploads/
+**/*.mp3
+**/*.wav
+**/*.m4a
+
+# IDE
+.vscode/
+.idea/
