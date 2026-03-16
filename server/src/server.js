@@ -8,6 +8,7 @@ const authMiddleware = require('./middleware/auth');
 const voicesRoutes = require('./routes/voices');
 const ttsRoutes = require('./routes/tts');
 const authRoutes = require('./routes/auth'); 
+const userRoutes = require('./routes/user');
 
 const app = express();
 
@@ -21,6 +22,7 @@ app.use(express.json({ limit: `${config.maxAudioSize}mb` }));
 app.use('/api/v1/auth', authRoutes);  // ← add this
 app.use('/api/v1/voices', voicesRoutes); 
 app.use('/api/v1/tts', ttsRoutes);
+app.use('/api/v1/user', userRoutes);
 
 // Health endpoint
 app.get('/api/v1/health', (req, res) => {
