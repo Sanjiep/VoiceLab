@@ -6,8 +6,8 @@ const morgan = require('morgan');
 const config = require('./config');
 const authMiddleware = require('./middleware/auth');
 const voicesRoutes = require('./routes/voices');
-
-const authRoutes = require('./routes/auth');  // ← add this
+const ttsRoutes = require('./routes/tts');
+const authRoutes = require('./routes/auth'); 
 
 const app = express();
 
@@ -20,6 +20,7 @@ app.use(express.json({ limit: `${config.maxAudioSize}mb` }));
 // Routes
 app.use('/api/v1/auth', authRoutes);  // ← add this
 app.use('/api/v1/voices', voicesRoutes); 
+app.use('/api/v1/tts', ttsRoutes);
 
 // Health endpoint
 app.get('/api/v1/health', (req, res) => {
