@@ -4,6 +4,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const config = require('./config');
+const authMiddleware = require('./middleware/auth');
 
 const authRoutes = require('./routes/auth');  // ← add this
 
@@ -29,6 +30,15 @@ app.get('/api/v1/health', (req, res) => {
   });
 });
 
+// Protected route test
+app.get('/api/v1/me', authMiddleware, (req, res) => {
+  res.json({
+    success: true,
+    message: 'You are authenticated!',
+    user: req.user
+  });
+});
+
 // 404 handler
 app.use((req, res) => {
   res.status(404).json({
@@ -36,6 +46,7 @@ app.use((req, res) => {
     path: req.originalUrl
   });
 });
+
 
 // Error handler
 app.use((err, req, res, next) => {
