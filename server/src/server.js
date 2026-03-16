@@ -5,6 +5,8 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 const config = require('./config');
 
+const authRoutes = require('./routes/auth');  // ← add this
+
 const app = express();
 
 // Middleware
@@ -12,6 +14,9 @@ app.use(helmet());
 app.use(cors());
 app.use(morgan('dev'));
 app.use(express.json({ limit: `${config.maxAudioSize}mb` }));
+
+// Routes
+app.use('/api/v1/auth', authRoutes);  // ← add this
 
 // Health endpoint
 app.get('/api/v1/health', (req, res) => {
@@ -26,13 +31,19 @@ app.get('/api/v1/health', (req, res) => {
 
 // 404 handler
 app.use((req, res) => {
-  res.status(404).json({ 
+  res.status(404).json({
     error: 'Route not found',
-    path: req.originalUrl 
+    path: req.originalUrl
   });
 });
 
+// Error handler
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ error: 'Something went wrong!' });
+});
+
 app.listen(config.port, () => {
-  console.log(`🚀 VoiceLab API: http://localhost:${config.port}`);
-  console.log(`📦 Environment: ${config.nodeEnv}`);
+  console.log(`🎙️ VoiceLab API: http://localhost:${config.port}`);
+  console.log(`🌍 Environment: ${config.nodeEnv}`);
 });
