@@ -1,8 +1,12 @@
 const prisma = require('../lib/prisma');
+const axios = require('axios');
+const fs = require('fs');
+const path = require('path');
 
-// Generate TTS (mock for now, Fish-Speech later)
+// Generate TTS using ElevenLabs
 const generateTTS = async (req, res) => {
   try {
+    console.log('API KEY:', process.env.ELEVENLABS_API_KEY);
     const { text, voiceId } = req.body;
 
     // Validation
@@ -27,7 +31,7 @@ const generateTTS = async (req, res) => {
       });
     }
 
-    // Check voice exists
+    // Check voice exists in our database
     const voice = await prisma.voice.findUnique({
       where: { id: voiceId }
     });
@@ -49,17 +53,48 @@ const generateTTS = async (req, res) => {
       }
     });
 
-    // TODO: Connect Fish-Speech here later
-    // For now, mock response
-    const mockAudioUrl = `https://storage.voicelab.com/audio/${generation.id}.mp3`;
+    // ElevenLabs default voice (Roger)
+    const elevenLabsVoiceId = 'CwhRBWXzGAHq8TQ4Fs17';
 
-    // Update generation with mock audio url
+    // Call ElevenLabs API
+    const elevenLabsResponse = await axios({
+      method: 'POST',
+      url: `https://api.elevenlabs.io/v1/text-to-speech/${elevenLabsVoiceId}`,
+      headers: {
+        'xi-api-key': process.env.ELEVENLABS_API_KEY,
+        'Content-Type': 'application/json',
+        'Accept': 'audio/mpeg',
+      },
+      data: {
+        text,
+        model_id: 'eleven_turbo_v2_5',
+        voice_settings: {
+          stability: 0.5,
+          similarity_boost: 0.75,
+        }
+      },
+      responseType: 'arraybuffer'
+    });
+
+    // Save audio file locally
+    const uploadsDir = path.join(__dirname, '../../uploads/audio');
+    if (!fs.existsSync(uploadsDir)) {
+      fs.mkdirSync(uploadsDir, { recursive: true });
+    }
+
+    const fileName = `${generation.id}.mp3`;
+    const filePath = path.join(uploadsDir, fileName);
+    fs.writeFileSync(filePath, elevenLabsResponse.data);
+
+    const audioUrl = `/uploads/audio/${fileName}`;
+
+    // Update generation in database
     const updatedGeneration = await prisma.generation.update({
       where: { id: generation.id },
       data: {
-        audioUrl: mockAudioUrl,
+        audioUrl,
         status: 'COMPLETED',
-        duration: text.length * 0.05, // fake duration
+        duration: text.length * 0.05,
       }
     });
 
@@ -77,8 +112,14 @@ const generateTTS = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('TTS generate error:', error);
-    res.status(500).json({ success: false, message: 'Something went wrong' });
+    console.error('TTS generate error:', error.message);
+
+    // Update generation status to FAILED
+    res.status(500).json({
+      success: false,
+      message: 'Something went wrong',
+      error: error.message
+    });
   }
 };
 

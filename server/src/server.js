@@ -9,6 +9,7 @@ const voicesRoutes = require('./routes/voices');
 const ttsRoutes = require('./routes/tts');
 const authRoutes = require('./routes/auth'); 
 const userRoutes = require('./routes/user');
+const path = require('path');
 
 const app = express();
 
@@ -23,6 +24,7 @@ app.use('/api/v1/auth', authRoutes);  // ← add this
 app.use('/api/v1/voices', voicesRoutes); 
 app.use('/api/v1/tts', ttsRoutes);
 app.use('/api/v1/user', userRoutes);
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 // Health endpoint
 app.get('/api/v1/health', (req, res) => {
