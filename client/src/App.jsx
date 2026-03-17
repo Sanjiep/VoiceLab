@@ -13,10 +13,17 @@ const ProtectedRoute = ({ children }) => {
   return token ? children : <Navigate to="/login" />
 }
 
+const HomeRedirect = () => {
+  const { token } = useAuth()
+  return <Navigate to={token ? '/dashboard' : '/login'} />
+}
+
+
 export default function App() {
   return (
     <div className="min-h-screen bg-gray-950 text-white">
       <Routes>
+        <Route path="/" element={<HomeRedirect />} />
         <Route path="/" element={<Navigate to="/dashboard" />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />

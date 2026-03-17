@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import api from '../utils/api'
 import { Mic, History, Music, LogOut, Key } from 'lucide-react'
+import Logo from '../components/Logo'
 
 export default function Dashboard() {
   const { user, logout } = useAuth()
@@ -30,7 +31,7 @@ export default function Dashboard() {
     <div className="min-h-screen bg-gray-950">
       {/* Navbar */}
       <nav className="border-b border-gray-800 px-6 py-4 flex justify-between items-center">
-        <h1 className="text-xl font-bold text-purple-400">🎙️ VoiceLab</h1>
+        <img src="/logo-white.svg" alt="VoiceLab" className="h-8" />
         <div className="flex items-center gap-4">
           <span className="text-gray-400 text-sm">Hello, {user?.name || user?.email}</span>
           <button onClick={handleLogout} className="flex items-center gap-2 text-gray-400 hover:text-white transition">
