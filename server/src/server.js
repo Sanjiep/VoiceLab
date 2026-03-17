@@ -15,8 +15,13 @@ const path = require('path');
 const app = express();
 
 // Middleware
-app.use(helmet());
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:5173',
+  credentials: true
+}));
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: 'cross-origin' }
+}));
 app.use(morgan('dev'));
 app.use(express.json({ limit: `${config.maxAudioSize}mb` }));
 
